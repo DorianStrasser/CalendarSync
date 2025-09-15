@@ -99,8 +99,8 @@ func TestKeepAttendeesWithEmailAsDisplayName(t *testing.T) {
 	assert.Equal(t, expectedEvent, event)
 }
 
-// verify that the email address is used as display name if the source provides none
-func TestKeepAttendeesUsesEmailIfDisplayNameMissing(t *testing.T) {
+// verify that a generic placeholder is used as display name if the source provides none
+func TestKeepAttendeesUsesPlaceholderIfDisplayNameMissing(t *testing.T) {
 	source := models.Event{
 		ICalUID:     "testId",
 		ID:          "testUid",
@@ -125,7 +125,7 @@ func TestKeepAttendeesUsesEmailIfDisplayNameMissing(t *testing.T) {
 		Title:   "CalendarSync Event",
 		Attendees: []models.Attendee{
 			{
-				DisplayName: "foo@example.com",
+				DisplayName: "CalendarSync Attendee",
 				Email:       fmt.Sprintf("%s@localhost", fmt.Sprint(models.Hash("foo@example.com"))),
 			},
 		},

@@ -23,12 +23,14 @@ func (t *KeepAttendees) Transform(source models.Event, sink models.Event) (model
 	var sinkAttendees models.Attendees
 	for _, sourceAttendee := range source.Attendees {
 		displayName := sourceAttendee.DisplayName
-		// If the source provides no display name or the configuration
-		// explicitly requests to use the mail address, fall back to the
-		// original email address of the attendee. This ensures that the
-		// sink always has a meaningful DisplayName for each attendee.
-		if displayName == "" || t.UseEmailAsDisplayName {
+		// Replace the display name with the email address when explicitly
+		// configured. If no display name is provided and using the email is
+		// not desired, substitute a generic placeholder to avoid leaking
+		// personal information.
+		if t.UseEmailAsDisplayName {
 			displayName = sourceAttendee.Email
+		} else if displayName == "" {
+			displayName = "CalendarSync Attendee"
 		}
 
 		email := sourceAttendee.Email
