@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/inovex/CalendarSync/internal/models"
+	"github.com/stretchr/testify/assert"
 )
 
 // verify keep attendees
@@ -96,5 +96,40 @@ func TestKeepAttendeesWithEmailAsDisplayName(t *testing.T) {
 			},
 		},
 	}
+	assert.Equal(t, expectedEvent, event)
+}
+
+// verify that the email address is used as display name if the source provides none
+func TestKeepAttendeesUsesEmailIfDisplayNameMissing(t *testing.T) {
+	source := models.Event{
+		ICalUID:     "testId",
+		ID:          "testUid",
+		Title:       "foo",
+		Description: "bar",
+		Attendees: []models.Attendee{
+			{
+				Email: "foo@example.com",
+			},
+		},
+	}
+	sink := models.NewSyncEvent(source)
+
+	transformer := KeepAttendees{}
+
+	event, err := transformer.Transform(source, sink)
+
+	assert.Nil(t, err)
+	expectedEvent := models.Event{
+		ICalUID: "testId",
+		ID:      "testUid",
+		Title:   "CalendarSync Event",
+		Attendees: []models.Attendee{
+			{
+				DisplayName: "foo@example.com",
+				Email:       fmt.Sprintf("%s@localhost", fmt.Sprint(models.Hash("foo@example.com"))),
+			},
+		},
+	}
+
 	assert.Equal(t, expectedEvent, event)
 }

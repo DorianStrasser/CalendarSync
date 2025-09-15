@@ -22,12 +22,16 @@ func (t *KeepAttendees) Name() string {
 func (t *KeepAttendees) Transform(source models.Event, sink models.Event) (models.Event, error) {
 	var sinkAttendees models.Attendees
 	for _, sourceAttendee := range source.Attendees {
-		var displayName = sourceAttendee.DisplayName
-		if t.UseEmailAsDisplayName {
+		displayName := sourceAttendee.DisplayName
+		// If the source provides no display name or the configuration
+		// explicitly requests to use the mail address, fall back to the
+		// original email address of the attendee. This ensures that the
+		// sink always has a meaningful DisplayName for each attendee.
+		if displayName == "" || t.UseEmailAsDisplayName {
 			displayName = sourceAttendee.Email
 		}
 
-		var email = sourceAttendee.Email
+		email := sourceAttendee.Email
 		// Hashing the email and creating the new email to use
 		emailHashedAndTransformed := fmt.Sprintf("%s@localhost", fmt.Sprint(models.Hash(email)))
 
