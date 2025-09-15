@@ -67,8 +67,7 @@ func TestKeepAttendeesWithEmailAsDisplayName(t *testing.T) {
 				Email:       "foo@example.com",
 			},
 			{
-				DisplayName: "Bar",
-				Email:       "bar@example.com",
+				Email: "bar@example.com",
 			},
 		},
 	}
@@ -87,7 +86,7 @@ func TestKeepAttendeesWithEmailAsDisplayName(t *testing.T) {
 		Title:   "CalendarSync Event",
 		Attendees: []models.Attendee{
 			{
-				DisplayName: "foo@example.com",
+				DisplayName: "Foo",
 				Email:       fmt.Sprintf("%s@localhost", fmt.Sprint(models.Hash("foo@example.com"))),
 			},
 			{
